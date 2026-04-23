@@ -11,6 +11,7 @@ export default function SettingsModal({ settings, onSave, onClose }) {
       ...prev,
       baseUrl: preset.baseUrl,
       model: preset.models[0],
+      apiKey: prev.baseUrl === preset.baseUrl ? prev.apiKey : '',
     }))
   }
 
