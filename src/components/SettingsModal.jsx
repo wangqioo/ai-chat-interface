@@ -7,16 +7,24 @@ export default function SettingsModal({ settings, onSave, onClose }) {
   const [showKey, setShowKey] = useState(false)
 
   function applyPreset(preset) {
-    setLocal(prev => ({
-      ...prev,
-      baseUrl: preset.baseUrl,
-      model: preset.models[0],
-      apiKey: prev.baseUrl === preset.baseUrl ? prev.apiKey : '',
-    }))
+    setLocal(prev => {
+      // 保存当前 provider 的 key
+      const savedKeys = { ...(prev._savedKeys || {}), [prev.baseUrl]: prev.apiKey }
+      // 恢复目标 provider 之前保存的 key（如果有）
+      const restoredKey = savedKeys[preset.baseUrl] || ''
+      return {
+        ...prev,
+        baseUrl: preset.baseUrl,
+        model: preset.models[0],
+        apiKey: restoredKey,
+        _savedKeys: savedKeys,
+      }
+    })
   }
 
   function handleSave() {
-    onSave(local)
+    const { _savedKeys, ...toSave } = local
+    onSave(toSave)
     onClose()
   }
 
